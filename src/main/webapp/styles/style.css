@@ -1,0 +1,154 @@
+body {
+  background: #f2f5fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+h1, h2 {
+  color: #2d4157;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+/* Navigation principale */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 32px auto 32px auto;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 11px;
+  box-shadow: 0 6px 18px rgba(44, 62, 80, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+li {
+  border-bottom: 1px solid #e3eaf2;
+}
+li:last-child {
+  border-bottom: none;
+}
+
+a {
+  display: block;
+  padding: 20px 20px;
+  color: #5178f4;
+  font-size: 1.12rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s, background 0.15s;
+  border-radius: 6px 6px 0 0;
+}
+a:hover {
+  background: #f7faff;
+  color: #26499c;
+  text-decoration: underline;
+}
+
+form {
+  margin-bottom: 15px;
+}
+label {
+  display: block;
+  margin-bottom: 12px;
+  color: #445869;
+  font-size: 15px;
+  text-align: left;
+}
+input[type="text"], input[type="email"], input[type="password"] {
+  width: 96%;
+  padding: 8px 10px;
+  border: 1.5px solid #c0d3ea;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  outline: none;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #6e8ae4;
+}
+
+button {
+  background: linear-gradient(90deg, #5178f4, #73a9fa);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 36px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(81,120,244,0.09);
+}
+button:hover {
+  background: linear-gradient(90deg, #73a9fa, #5178f4);
+}
+
+
+div, .div-login, .div-logout, .form-container{
+  background: #fff;
+  width: 600px;
+  margin: 40px auto;
+  padding: 30px 32px 18px 32px;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(44, 62, 80, 0.12);
+  text-align: center;
+  margin-bottom: 50px; /* Espace entre deux blocs form-container */
+}
+
+/* Encadré pour messages/informations */
+.div-message {
+  max-width: 410px;
+  margin: 30px auto 0 auto;
+  background: #eaf1fd;
+  color: #2d4157;
+  border-radius: 7px;
+  padding: 16px 24px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(81,120,244,0.06);
+  font-size: 1.1rem;
+  font-weight: 450;
+  letter-spacing: 0.2px;
+}
+
+.success-message {
+	color: green;
+}
+
+.error-message {
+	color: red;
+}
+
+
+.home-link {
+  text-align: center;
+  margin-top: 18px; /* or 32px for more space */
+}
+
+.home-link a {
+  display: inline-block;
+  background: #5178f4;
+  color: #fff;
+  border-radius: 5px;
+  padding: 11px 34px;
+  font-size: 1.08rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(81,120,244,0.09);
+  letter-spacing: 0.5px;
+}
+.home-link a:hover {
+  background: #26499c;
+}
