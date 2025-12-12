@@ -1,25 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app
-    xmlns="https://jakarta.ee/xml/ns/jakartaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-    version="6.0">
-    
+        xmlns="https://jakarta.ee/xml/ns/jakartaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+        version="6.0">
+
   <display-name>bank-webapp</display-name>
-  
-  
+
   <session-config>
-  	<session-timeout>60</session-timeout>
+    <session-timeout>60</session-timeout>
   </session-config>
-  
-  <context-param>  
+
+  <context-param>
     <param-name>CreateBankAccount</param-name>
     <param-value>Admin</param-value>
   </context-param>
-  
-  <context-param>  
+
+  <context-param>
     <param-name>ViewAccount</param-name>
     <param-value>Client, Admin</param-value>
   </context-param>
-  
+  <!-- Déclaration du filtre -->
+  <filter>
+    <filter-name>HttpsFilter</filter-name>
+    <filter-class>filters.HttpsFilter</filter-class>
+  </filter>
+
+  <!-- Mapping du filtre sur toutes les URL -->
+  <filter-mapping>
+    <filter-name>HttpsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>filters.LoginFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/login</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>LogoutFilter</filter-name>
+    <filter-class>filters.LogoutFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>LogoutFilter</filter-name>
+    <url-pattern>/logout</url-pattern>
+  </filter-mapping>
+
+  <!-- Forcer HTTPS sur toutes les routes -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Secured URLs</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <!-- Autoriser HTTP pour index.jsp -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Home Page</web-resource-name>
+      <url-pattern>/index.jsp</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
 </web-app>

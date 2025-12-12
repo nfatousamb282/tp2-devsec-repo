@@ -3,6 +3,7 @@ package persistence.users;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import model.Account;
 import model.User;
@@ -35,30 +36,48 @@ public class JdbcUsersPersistence {
     }
 
     public void save(User u) throws Exception {
-        String sql = "INSERT INTO users VALUES ('" + u.getEmail() + "', "+u.getName() +"', '"+u.getPassword() + "')";
-        try (Statement st = conn.createStatement()) {
-            st.executeUpdate(sql);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPwd = encoder.encode(u.getPassword());
+        u.setPassword(hashedPwd);
+
+        String sql = "INSERT INTO users VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, u.getEmail());
+            ps.setString(2, u.getName());
+            ps.setString(3, u.getPassword()); // mot de passe haché
+            ps.setString(4, u.getRoles());
+            ps.executeUpdate();
         }
     }
 
     public User findUserByEmailAndPwd(String email, String pwd) throws Exception {
-        String sql = "SELECT email, name, roles FROM users WHERE email = '" + email + "' and password = '" + pwd + "'";
-        
-        Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery(sql);
-        if (rs.next()) {
-        	return new User(rs.getString("email"), rs.getString("name"), rs.getString("roles"));
+        User user = findUserByEmail(email);
+        if (user == null) return null;
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (encoder.matches(pwd, user.getPassword())) {
+            return user;
+        } else {
+            return null;
+        }
+    }
+
+
+    public User findUserByEmail(String userEmail) throws Exception {
+        String sql = "SELECT email, name, password, roles FROM users WHERE email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userEmail);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getString("email"),
+                            rs.getString("name"),
+                            rs.getString("password"), // récupère le hash
+                            rs.getString("roles")
+                    );
+                }
+            }
         }
         return null;
     }
-
-	public User findUserByEmail(String userEmail) throws Exception {
-		String sql = "SELECT email, name, roles FROM users WHERE email = '" + userEmail + "'";
-		Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery(sql);
-        if (rs.next()) {
-        	return new User(rs.getString("email"), rs.getString("name"), rs.getString("roles"));
-        }
-		return null;
-	}
 }

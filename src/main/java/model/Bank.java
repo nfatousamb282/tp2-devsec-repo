@@ -46,14 +46,15 @@ public class Bank {
 	public List<Account> findAccountByOwnerEmail(String ownerEmail) throws Exception {
 		return this.persistence.findAccountByOwnerEmail(ownerEmail);
 	}
-	
-	public User validateUserByEmailPassword(String ownerEmail, String pwd) throws Exception {
-		User user = this.persistence.validateUserByEmailPassword(ownerEmail, pwd);
-		if (user == null)
-			throw new UserNotFoundException(ownerEmail);		
-		return user;
-	}
-	
+
+//	public User validateUserByEmailPassword(String ownerEmail, String pwd) throws Exception {
+//		User user = this.persistence.findUserByEmailAndPwd(ownerEmail, pwd);
+//		if (user == null)
+//			throw new UserNotFoundException(ownerEmail);
+//		return user;
+//	}
+
+
 	public void updateBankAccount(int accountId, String amountExpression) throws Exception {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("js");

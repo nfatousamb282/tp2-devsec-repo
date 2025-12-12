@@ -19,8 +19,10 @@ public interface IPersistence {
 	public List<Account> findAccountByOwnerEmail(String ownerEmail) throws Exception;
 	public User findUserByEmail(String userEmail) throws Exception;
 	public User validateUserByEmailPassword(String ownerEmail, String pwd) throws Exception;
-	
-	
+
+
+
+
 //	public Client findClientById (Long clientId); 
 //	public Client registerClient(Client client);
 

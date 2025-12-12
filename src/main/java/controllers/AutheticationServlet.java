@@ -9,6 +9,7 @@ import model.User;
 import java.io.IOException;
 
 import controllers.exceptions.LimiteNbRequestsExceededException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  *
@@ -25,45 +26,69 @@ public class AutheticationServlet extends HttpServlet {
     private static final int DELAI_SECONDES = 60; // intervalle de temps de la limite du nombre de requêtes 
  
 	@Override
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String action = request.getParameter("action");
-		String message=null;
+		String message = null;
+
 		try {
-			this.limiteRequetes(request, response);	// limite du nombre de requêtes aceptées par intervalle de temps glissant  
+			this.limiteRequetes(request, response);
+
 			if ("login".equals(action)) {
+
 				String username = request.getParameter("pUserEmail");
 				String password = request.getParameter("pUserPwd");
-				User user;
+
 				try {
-					user = bank.validateUserByEmailPassword(username, password);			
+					// Étape 1 : récupérer l'utilisateur par email uniquement
+					User user = bank.findUserByEmail(username); // ⚠️ tu dois avoir cette méthode dans Bank
+
+					if (user == null) {
+						response.sendRedirect("./view/login_logout_form.jsp?messageType=error&message=Incorrect credentials!");
+						return;
+					}
+
+					// Étape 2 : Vérifier le mot de passe haché avec BCrypt
+					BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+					if (!encoder.matches(password, user.getPassword())) {
+						response.sendRedirect("./view/login_logout_form.jsp?messageType=error&message=Incorrect credentials!");
+						return;
+					}
+
+					// Étape 3 : Authentification OK → créer session + cookie
 					HttpSession session = request.getSession(true);
 					session.setAttribute("principal", user);
+
 					Cookie roleCookie = new Cookie("ClientRole", user.isAdmin() ? "ADMIN" : "CLIENT");
 					response.addCookie(roleCookie);
+
 					message = "Successful connection!";
-					response.sendRedirect("./index.jsp?messageType=success&message="+message);
+					response.sendRedirect("./index.jsp?messageType=success&message=" + message);
+
 				} catch (Exception e) {
-					if (e.getClass().getSimpleName().equals("UserNotFoundException"))
-						message = "Incorrect credentials!";
-					else
-						throw new ServletException(e);
-					response.sendRedirect("./view/login_logout_form.jsp?messageType=error&message="+message);
+					throw new ServletException(e);
 				}
 
 			} else if ("logout".equals(action)) {
+
 				HttpSession session = request.getSession(false);
 				if (session != null) session.invalidate();
+
 				Cookie roleCookie = new Cookie("ClientRole", null);
 				roleCookie.setMaxAge(0);
 				response.addCookie(roleCookie);
+
 				message = "Successful logout!";
-				response.sendRedirect("./index.jsp?messageType=success&message="+message);
+				response.sendRedirect("./index.jsp?messageType=success&message=" + message);
 			}
+
 		} catch (LimiteNbRequestsExceededException e) {
-			response.sendRedirect("./index.jsp?messageType=error&message="+e.getMessage());
+			response.sendRedirect("./index.jsp?messageType=error&message=" + e.getMessage());
 		}
 	}
-	
+
+
 	private void limiteRequetes(HttpServletRequest request, HttpServletResponse response) throws IOException, LimiteNbRequestsExceededException {
 		int nbRequetes = 0;
         long debutDelai = System.currentTimeMillis();
