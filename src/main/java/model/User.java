@@ -20,10 +20,11 @@ public class User {
 		this.roles = roles;
 	}
 
-	// from database
+	// from database OU pour utilisateur anonyme
 	public User(String email, String name, String roles) {
 		this.email = email;
-		this.name = name;			
+		this.name = name;
+		this.password = null; // explicitement null pour les users sans mdp
 		this.roles = roles;
 	}
 
