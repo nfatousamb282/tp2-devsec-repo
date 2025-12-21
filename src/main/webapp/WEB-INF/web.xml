@@ -7,10 +7,17 @@
 
   <display-name>bank-webapp</display-name>
 
+  <!-- Configuration des cookies de session sécurisés -->
   <session-config>
     <session-timeout>60</session-timeout>
+    <cookie-config>
+      <http-only>true</http-only>      <!-- Empêche JavaScript d'accéder au cookie -->
+      <secure>true</secure>              <!-- HTTPS uniquement -->
+    </cookie-config>
+    <tracking-mode>COOKIE</tracking-mode>
   </session-config>
 
+  <!-- PARAMÈTRES DE CONTEXTE : Règles d'autorisation -->
   <context-param>
     <param-name>CreateBankAccount</param-name>
     <param-value>Admin</param-value>
@@ -20,37 +27,118 @@
     <param-name>ViewAccount</param-name>
     <param-value>Client, Admin</param-value>
   </context-param>
-  <!-- Déclaration du filtre -->
+
+  <context-param>
+    <param-name>Transaction</param-name>
+    <param-value>Client, Admin</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>AdminPages</param-name>
+    <param-value>Admin</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>ClientPages</param-name>
+    <param-value>Client, Admin</param-value>
+  </context-param>
+  <listener>
+    <listener-class>listeners.CsrfSessionListener</listener-class>
+  </listener>
+
+
+  <!-- 1. XSS Protection Filter (EN PREMIER) -->
+  <filter>
+    <filter-name>XSSProtectionFilter</filter-name>
+    <filter-class>filters.XSSProtectionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XSSProtectionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- 2. HTTPS Filter -->
   <filter>
     <filter-name>HttpsFilter</filter-name>
     <filter-class>filters.HttpsFilter</filter-class>
   </filter>
-
-  <!-- Mapping du filtre sur toutes les URL -->
+  <!-- ... reste des filtres ... -->
   <filter-mapping>
     <filter-name>HttpsFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
+  <!-- 3. Login Filter -->
   <filter>
     <filter-name>LoginFilter</filter-name>
     <filter-class>filters.LoginFilter</filter-class>
   </filter>
-
   <filter-mapping>
     <filter-name>LoginFilter</filter-name>
     <url-pattern>/login</url-pattern>
   </filter-mapping>
+
+  <!-- 4. Logout Filter -->
   <filter>
     <filter-name>LogoutFilter</filter-name>
     <filter-class>filters.LogoutFilter</filter-class>
   </filter>
-
   <filter-mapping>
     <filter-name>LogoutFilter</filter-name>
     <url-pattern>/logout</url-pattern>
   </filter-mapping>
 
-  <!-- Forcer HTTPS sur toutes les routes -->
+  <!-- 5. Public Authentication Filter -->
+  <filter>
+    <filter-name>PublicAuthenticationFilter</filter-name>
+    <filter-class>filters.PublicAuthenticationFilter</filter-class>
+    <init-param>
+      <param-name>public-urls</param-name>
+      <param-value>
+        /view/login_logout_form.jsp,
+        /auth,
+        /styles/,
+        /index.jsp,
+        /test-db
+      </param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>PublicAuthenticationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- 6. Authentication Filter -->
+  <filter>
+    <filter-name>AuthentificationFilter</filter-name>
+    <filter-class>filters.AuthenticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthentificationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- 7. Authorization Filter -->
+  <filter>
+    <filter-name>AuthorizationFilter</filter-name>
+    <filter-class>filters.AuthorizationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthorizationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- 8. CSRF Filter (APRÈS Authorization) -->
+  <filter>
+    <filter-name>CsrfFilter</filter-name>
+    <filter-class>filters.CsrfFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CsrfFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <!-- Configuration HTTPS -->
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Secured URLs</web-resource-name>
@@ -61,7 +149,6 @@
     </user-data-constraint>
   </security-constraint>
 
-  <!-- Autoriser HTTP pour index.jsp -->
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Home Page</web-resource-name>

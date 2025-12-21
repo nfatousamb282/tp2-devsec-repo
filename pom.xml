@@ -46,7 +46,18 @@
            <artifactId>commons-logging</artifactId>
            <version>1.2</version>
        </dependency>
-
+       <!-- Protection XSS -->
+       <dependency>
+           <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+           <artifactId>owasp-java-html-sanitizer</artifactId>
+           <version>20220608.1</version>
+       </dependency>
+       <!-- Protection contre injection de code -->
+       <dependency>
+           <groupId>org.owasp.encoder</groupId>
+           <artifactId>encoder</artifactId>
+           <version>1.4.0</version>
+       </dependency>
        <!-- https://mvnrepository.com/artifact/org.openjdk.nashorn/nashorn-core -->
 	<dependency>
 	    <groupId>org.openjdk.nashorn</groupId>

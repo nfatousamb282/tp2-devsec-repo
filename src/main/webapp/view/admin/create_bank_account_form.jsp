@@ -18,7 +18,9 @@
 		
 	  <h2>Create account (connected as: ${sessionScope.principal == null ? "none" : sessionScope.principal.name})</h2>
 	  <form action="../../CreateBankAccount" method="post">
-	    <label>Client email: <input type="text" name="pClientEmail" /></label><br/>
+		  <input type="hidden" name="csrfToken" value="${sessionScope.CSRF_TOKEN}" />
+
+		  <label>Client email: <input type="text" name="pClientEmail" /></label><br/>
 	    <button>Create</button>
 	  </form>
 	  

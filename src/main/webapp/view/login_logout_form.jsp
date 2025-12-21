@@ -22,6 +22,8 @@
 	<div class="div-login">
 		<h2>Login (not yet connected)</h2>
 		<form action="../auth" method="post" onsubmit="verifTaillePwd(event)">
+			<input type="hidden" name="csrfToken" value="${sessionScope.CSRF_TOKEN}" />
+
 			<label>Email: <input type="text" id="idUserEmail" name="pUserEmail" required /></label><br/>
 			<label>Password: <input type="password" id="idUserPwd" name="pUserPwd" required/></label><br/>
 			<span id="pwd-error-msg" class="error-message"></span> <br/>
@@ -41,6 +43,8 @@
 	<div class="div-logout">
 		<h2>Logout confirmation (connected as: ${sessionScope.principal.name})</h2>
 		<form action="../auth" method="post">
+			<input type="hidden" name="csrfToken" value="${sessionScope.CSRF_TOKEN}" />
+
 			<input type="hidden" name="action" value="logout"/>
 			<button>Logout</button>
 		</form>

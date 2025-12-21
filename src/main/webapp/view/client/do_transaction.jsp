@@ -20,6 +20,7 @@
 	<div>
 		<h2>Perform a transacti (connected as: ${sessionScope.principal == null ? "none" : sessionScope.principal.name})</h2>
 		<form action="../../transaction" method="post">
+			<input type="hidden" name="csrfToken" value="${sessionScope.CSRF_TOKEN}" />
 			<label>Account Id: </label>
 			<input type="text" name="pAccountId" value="${param.pAccountId != null ? param.pAccountId : ''}" ${param.pAccountId != null ? 'readonly' : ''} > 
 			<br/>
